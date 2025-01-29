@@ -1,0 +1,62 @@
+/* Navbar */
+.navbar {
+    position: fixed;
+    /* Fixe la navbar en haut de la page */
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 50;
+    /* Place la navbar au-dessus de l'image */
+}
+
+/* Fond dégradé pour la navbar */
+.custom-bg-navbar {
+    background-image: linear-gradient(180deg, rgba(0, 0, 0, 0.7) 10%, transparent);
+}
+
+.navbar-left-img {
+    width: 90px;
+}
+
+.navbar-left-ul {
+    display: flex;
+    list-style: none;
+    gap: 20px;
+}
+
+/* Navbar droite : icônes et profil */
+.navbar-right-icons {
+    width: 20px;
+    cursor: pointer;
+}
+
+.navbar_profile {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    cursor: pointer;
+}
+
+/* Menu déroulant du profil */
+.dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: #191919;
+    padding: 20px 30px;
+    border-radius: 4px;
+    z-index: 1;
+    display: none;
+    
+}
+
+/* Affichage du menu au survol */
+.navbar_profile:hover .dropdown {
+    display: block;
+}
+
+.nav_dark{
+    background-color: #141414;
+}
+
+
