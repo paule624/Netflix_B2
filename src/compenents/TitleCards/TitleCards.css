@@ -9,3 +9,37 @@
     margin-top: 50px 25px;
 }
 
+@media (max-width: 800px) {
+    .titleCards{
+        margin-top:20px;
+        margin-bottom: 0;
+    }
+    .titleCards h2{
+        font-size: 20px;
+    }
+    .card_list img{
+        width: 200px;
+    }
+    .card_list p{
+        font-size: 12px;
+    
+}
+}
+
+
+@media (max-width: 500px) {
+    
+
+    .titleCards h2 {
+        font-size: 15px;
+    }
+
+    .card_list img {
+        width: 165px;
+    }
+
+    .card_list p {
+        font-size: 10px;
+
+    }
+}

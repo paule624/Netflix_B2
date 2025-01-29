@@ -26,7 +26,7 @@ const Navbar = () => {
       className="navbar flex justify-around  text-sm color-e5e5e5 z-1 pt-5 custom-bg-navbar pb-4"
     >
       {/* Section gauche */}
-      <div className="flex center gap-20">
+      <div className="navbar-left flex center gap-20">
         <img src={logo} alt="Netflix Logo" className="navbar-left-img" />
         <ul className="navbar-left-ul cursor-pointer items-center">
           <li>Home</li>
@@ -39,7 +39,7 @@ const Navbar = () => {
       </div>
 
       {/* Section droite */}
-      <div className="flex center gap-5 items-center">
+      <div className=" navbar_right flex center gap-5 items-center">
         <img
           src={search_icon}
           alt="Search Icon"

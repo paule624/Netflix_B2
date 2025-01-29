@@ -1,9 +1,7 @@
 /* Hero */
 .Hero {
   position: relative;
-  width: 100%;
-  height: 100vh;
-  align-items: flex-start; /* Hauteur ajustée à 100% de la fenêtre */
+  
 }
 
 .banner_img {
@@ -17,11 +15,11 @@
 
 .hero_caption {
   position: absolute;
-  top: 50%;
-  left: 6%;
-  transform: translateY(-10%);
-  color: white;
   width: 100%;
+  padding-left: 6%;
+  bottom: 0;
+  color: white;
+  
 }
 
 .hero_caption_img {
@@ -33,10 +31,17 @@
 .hero_caption p {
   font-size: 17px;
   max-width: 700px;
+  margin-bottom: 20px;
 }
-
-.hero_buttons_light,
-.hero_buttons_dark {
+.hero_btn{
+  display: flex;
+  gap: 10px;
+  margin-bottom: 50px;
+}
+.hero_btn .btn img{
+  width: 25px;
+}
+.hero_btn .btn {
   border: 0;
   outline: 0;
   padding: 8px 20px;
@@ -44,7 +49,7 @@
   align-items: center;
   gap: 10px;
   font-size: 15px;
-  font-weight: 500;
+  font-weight: 600;
   border-radius: 4px;
   cursor: pointer;
 }
@@ -53,12 +58,17 @@
   background: white;
   color: black;
 }
-
+.hero_buttons_light:hover{
+  background: #FFFFFFBF;
+ 
+}
 .hero_buttons_dark {
   background: #6d6d6eb3;
   color: white;
 }
-
+.hero_buttons_dark:hover {
+  background: #6d6d6e66;
+}
 
 
 .populaire_netflix_title {
@@ -67,7 +77,6 @@
   color: white;
   text-transform: uppercase;
   letter-spacing: 1px;
-  margin-bottom: 20px;
 }
 
 
@@ -79,7 +88,7 @@
 }
 .titleCards_hero{
  padding-left: 0;
- margin-top: 120px; 
+ margin-top: 100px; 
 }
 
 .card_list::-webkit-scrollbar {
@@ -93,3 +102,48 @@
 
 
 
+@media (max-width: 1024px) {
+  .hero_caption .titleCards_hero{
+    display: none;
+  }
+  .hero_btn {
+    margin-bottom: 30px;
+  }
+
+}
+
+@media (max-width: 800px) {
+  .hero_caption {
+padding-left: 4%;
+  }
+  .hero_caption_img{
+    margin-bottom: 10px;
+    width: 40%;
+
+  }
+
+  .hero_caption p{
+    font-size: 12px;
+    margin-bottom: 10px;
+  }
+  .hero_buttons_dark img .hero_buttons_light img .btn{
+    width: 20px;
+  }
+  .more_cards{
+    padding-left: 4%;
+  }
+}
+
+@media (max-width: 500px) {
+  .hero_caption img{
+    display: none;
+  }
+    .hero_buttons_dark img .hero_buttons_light .btn{
+      width: 15px;
+    }
+    .btn{
+      padding: 4px 10px;
+      gap: 5px;
+      font-size: 10px;
+    }
+}

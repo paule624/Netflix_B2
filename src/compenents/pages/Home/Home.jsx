@@ -32,12 +32,12 @@ const Home = () => {
               vivant dans le Istanbul moderne se lance dans une quête pour
               sauver la ville d&#39;un ennemi immortel.
             </p>
-            <div className="flex gap-2.5">
-              <button className="hero_buttons_light">
+            <div className="hero_btn flex gap-2.5">
+              <button className=" btn hero_buttons_light">
                 <img src={play_icon} alt="" className="w-6" />
                 Play
               </button>
-              <button className="hero_buttons_dark">
+              <button className=" btn hero_buttons_dark">
                 <img src={info_icon} alt="" className="w-6" />
                 Plus d&#39;info
               </button>
