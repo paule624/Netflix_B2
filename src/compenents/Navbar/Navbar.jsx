@@ -8,7 +8,7 @@ import caret_icon from "../../assets/caret_icon.svg";
 import "./Navbar.css";
 import { use } from "react";
 import { logout } from "../../firebase";
-
+import { Link } from "react-router-dom";
 const Navbar = () => {
   const navRef = useRef();
   useEffect(() => {
@@ -29,23 +29,27 @@ const Navbar = () => {
       <div className="navbar-left flex center gap-20">
         <img src={logo} alt="Netflix Logo" className="navbar-left-img" />
         <ul className="navbar-left-ul cursor-pointer items-center">
-          <li>Home</li>
-          <li>TV Shows</li>
-          <li>Films</li>
-          <li>New & Popular</li>
-          <li>My List</li>
-          <li>Browse by Language</li>
+          <Link to="/Home">
+            <li className="hover:underline">Home</li>
+          </Link>
+          <li className="hover:underline">TV Shows</li>
+          <Link to="/Movie">
+            <li className="hover:underline">Films</li>
+          </Link>
+          <li className="hover:underline">New & Popular</li>
+          <li className="hover:underline">My List</li>
+          <li className="hover:underline">Browse by Language</li>
         </ul>
       </div>
 
       {/* Section droite */}
-      <div className=" navbar_right flex center gap-5 items-center">
+      <div className=" navbar_right flex center gap-6 items-center">
         <img
           src={search_icon}
           alt="Search Icon"
           className="navbar-right-icons"
         />
-        <p className="cursor-pointer">Enfant</p>
+        <p className="cursor-pointer hover:underline">Enfant</p>
         <img src={bell_icon} alt="Bell Icon" className="navbar-right-icons" />
         <div className="navbar_profile relative">
           <img

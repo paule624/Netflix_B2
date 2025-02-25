@@ -1,11 +1,9 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useRef, useState } from "react";
-import cards_data from "../../assets/cards/Cards_data";
 import "./TitleCards.css";
-import { Link } from "react-router-dom";
 
 // eslint-disable-next-line react/prop-types
-const TitleCards = ({ title, category }) => {
+const TitleCards = ({ title, category, setSelectedMovie }) => {
   const [apiData, setApiData] = useState([]);
   const cardsRef = useRef();
   const options = {
@@ -21,6 +19,7 @@ const TitleCards = ({ title, category }) => {
     event.preventDefault();
     cardsRef.current.scrollLeft += event.deltaY;
   };
+
   useEffect(() => {
     fetch(
       `https://api.themoviedb.org/3/movie/${
@@ -31,28 +30,37 @@ const TitleCards = ({ title, category }) => {
       .then((res) => res.json())
       .then((res) => setApiData(res.results))
       .catch((err) => console.error(err));
-    cardsRef.current.addEventListener("wheel", handleWheel);
+
+    const currentRef = cardsRef.current;
+    currentRef.addEventListener("wheel", handleWheel);
+
+    return () => {
+      currentRef.removeEventListener("wheel", handleWheel);
+    };
   }, []);
+
   return (
     <div className="titleCards">
-      <h2 className="mb-2">{title ? title : "Populaire sur Netflix"}</h2>
+      <h2 className="mb-2">{title || "Populaire sur Netflix"}</h2>
       <div className="card_list flex gap-2.5 overflow-x-scroll" ref={cardsRef}>
         {apiData.map((card, index) => {
+          if (!card.backdrop_path) return null;
+
           return (
-            <Link
-              to={`/player/${card.id}`}
-              className="card relative"
+            <div
               key={index}
+              className="card relative cursor-pointer"
+              onClick={() => setSelectedMovie(card)}
             >
               <img
-                src={"https://image.tmdb.org/t/p/w500" + card.backdrop_path}
-                alt=""
-                className="max-w-60 cursor-pointer rounded-b-sm"
+                src={`https://image.tmdb.org/t/p/w500${card.backdrop_path}`}
+                alt={card.original_title}
+                className="max-w-60 rounded-sm"
               />
-              <p className="absolute bottom-2.5 right-2.5 no-underline text-white ">
+              <p className="absolute bottom-2.5 right-2.5 text-white">
                 {card.original_title}
               </p>
-            </Link>
+            </div>
           );
         })}
       </div>

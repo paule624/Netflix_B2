@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React from "react";
+import React, { useState } from "react";
 import Navbar from "../../Navbar/Navbar";
 import hero_banner from "../../../assets/hero_banner.jpg";
 import hero_title from "../../../assets/hero_title.png";
@@ -9,8 +9,12 @@ import Footer from "../../Footer/Footer";
 import play_icon from "../../../assets/play_icon.png";
 import info_icon from "../../../assets/info_icon.png";
 import TitleCards_hero from "../../TitleCards_hero/TitleCards_hero";
+import PlayerOverlay from "../../pages/PlayerOverlay/PlayerOverlay";
 
 const Home = () => {
+  // État pour stocker le film sélectionné (détails pour l'overlay)
+  const [selectedMovie, setSelectedMovie] = useState(null);
+
   return (
     <div className="home">
       <Navbar />
@@ -33,31 +37,55 @@ const Home = () => {
               sauver la ville d&#39;un ennemi immortel.
             </p>
             <div className="hero_btn flex gap-2.5">
-              <button className=" btn hero_buttons_light">
+              <button className="btn hero_buttons_light">
                 <img src={play_icon} alt="" className="w-6" />
                 Play
               </button>
-              <button className=" btn hero_buttons_dark">
+              <button className="btn hero_buttons_dark">
                 <img src={info_icon} alt="" className="w-6" />
                 Plus d&#39;info
               </button>
             </div>
-            <TitleCards_hero className="cards_popular" />
+            <TitleCards_hero
+              setSelectedMovie={setSelectedMovie}
+              className="cards_popular"
+            />
           </div>
         </div>
       </div>
 
       <div className="more_cards">
-        <TitleCards title={"Film à succès"} category={"top_rated"} />
-        <TitleCards title={"Uniquement sur Netflix"} category={"popular"} />
-        <TitleCards title={"À venir"} category={"upcoming"} />
+        <TitleCards
+          title={"Film à succès"}
+          category={"top_rated"}
+          setSelectedMovie={setSelectedMovie}
+        />
+        <TitleCards
+          title={"Uniquement sur Netflix"}
+          category={"popular"}
+          setSelectedMovie={setSelectedMovie}
+        />
+        <TitleCards
+          title={"À venir"}
+          category={"upcoming"}
+          setSelectedMovie={setSelectedMovie}
+        />
         <TitleCards
           title={"Sélections principales pour vous"}
           category={"now_playing"}
+          setSelectedMovie={setSelectedMovie}
         />
       </div>
 
       <Footer />
+
+      {/* Affichage de l'overlay avec les détails du film */}
+      {selectedMovie && (
+        <PlayerOverlay
+          movie={selectedMovie}
+          onClose={() => setSelectedMovie(null)}
+        />
+      )}
     </div>
   );
 };

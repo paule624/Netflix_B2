@@ -7,9 +7,11 @@ import Player from "./compenents/pages/Player/Player";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "./firebase";
 import { ToastContainer, toast } from "react-toastify";
+import Movie from "./compenents/pages/Movie/movie";
 
 const App = () => {
   const navigate = useNavigate();
+
   useEffect(() => {
     onAuthStateChanged(auth, async (user) => {
       if (user) {
@@ -21,6 +23,7 @@ const App = () => {
       }
     });
   }, []);
+
   return (
     <div>
       <ToastContainer theme="dark" />
@@ -28,6 +31,10 @@ const App = () => {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/player/:id" element={<Player />} />
+
+        {/* Ajoute la route pour la page des films */}
+        <Route path="/movie" element={<Movie />} />
+        <Route path="/Home" element={<Home />} />
       </Routes>
     </div>
   );

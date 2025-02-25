@@ -9,8 +9,8 @@ Technologie :
 
 FEATURES :
 
-- Responsive Téléphone
-- Connexion / Avoir l'input en rouge lorsque ce n'est pas bon
+- ~~Responsive Téléphone~~
+- ~~Connexion / Avoir l'input en rouge lorsque ce n'est pas bon~~
 - Faire slide IN lors détails du film
 - Pouvoir cliquer sur jaime
 - Lors premiere connexion, choisir des films
