@@ -78,7 +78,7 @@ const Login = () => {
               <input type="checkbox" className="w-4 h-4" />
               <p className="">Se souvenir de moi</p>
             </div>
-            <p>Besoin d&#39;aide ?</p>
+            <p className="cursor-pointer">Besoin d&#39;aide ?</p>
           </div>
         </form>
         <div className="form_switch mt-10 text-[#737373]">
@@ -87,7 +87,7 @@ const Login = () => {
               Nouveau sur Netflix ?
               <span
                 onClick={() => setSignState("S'inscrire")}
-                className="ml-1.5 text-white font-medium cursor-pointer"
+                className="ml-1.5 text-white font-medium cursor-pointer hover:underline"
               >
                 {" "}
                 S&#39;inscrire maintenant
@@ -98,7 +98,7 @@ const Login = () => {
               Vous avez déjà un compte ?
               <span
                 onClick={() => setSignState("Se connecter")}
-                className="ml-1.5 text-white font-medium cursor-pointer"
+                className="ml-1.5 text-white font-medium cursor-pointer hover:underline"
               >
                 {" "}
                 Connexion

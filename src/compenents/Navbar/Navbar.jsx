@@ -36,9 +36,9 @@ const Navbar = () => {
           <Link to="/Movie">
             <li className="hover:underline">Films</li>
           </Link>
-          <li className="hover:underline">New & Popular</li>
-          <li className="hover:underline">My List</li>
-          <li className="hover:underline">Browse by Language</li>
+          <li className="hover:underline">Nouveau & Populaires</li>
+          <li className="hover:underline">Ma Liste</li>
+          <li className="hover:underline">Rechercher par langue</li>
         </ul>
       </div>
 

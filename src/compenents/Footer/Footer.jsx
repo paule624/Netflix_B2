@@ -16,19 +16,27 @@ const Footer = () => {
         <img src={youtube_icon} alt="" className="cursor-pointer w-7.5" />
       </div>
       <ul className="grid grid-cols-4 auto-cols-auto gap-4 mb-8 list-none">
-        <li>Audio Description</li>
-        <li>Centre aide</li>
-        <li>Cartes cadeaux</li>
-        <li>Centre Media</li>
-        <li>Relations investisseurs</li>
-        <li>Job</li>
-        <li>Conditions d&#39;utilisation</li>
-        <li>Information legales</li>
-        <li>Préférence cookies</li>
-        <li>informations personelles</li>
-        <li>Nous contacter</li>
+        <li className="cursor-pointer hover:underline">Audio Description</li>
+        <li className="cursor-pointer hover:underline">Centre aide</li>
+        <li className="cursor-pointer hover:underline">Cartes cadeaux</li>
+        <li className="cursor-pointer hover:underline">Centre Media</li>
+        <li className="cursor-pointer hover:underline">
+          Relations investisseurs
+        </li>
+        <li className="cursor-pointer hover:underline">Job</li>
+        <li className="cursor-pointer hover:underline">
+          Conditions d&#39;utilisation
+        </li>
+        <li className="cursor-pointer hover:underline">Information legales</li>
+        <li className="cursor-pointer hover:underline">Préférence cookies</li>
+        <li className="cursor-pointer hover:underline">
+          informations personelles
+        </li>
+        <li className="cursor-pointer hover:underline">Nous contacter</li>
       </ul>
-      <p className="text-gray-500 text-sm">© 1997-2025 Netflix, Inc</p>
+      <p className="text-gray-500 text-sm text-center">
+        © 1997-2025 Netflix, Inc
+      </p>
     </div>
   );
 };

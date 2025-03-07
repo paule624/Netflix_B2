@@ -1,11 +1,13 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useRef, useState } from "react";
+import PlayerOverlay from "../pages/PlayerOverlay/PlayerOverlay";
 import cards_data from "../../assets/cards/Cards_data";
 import "./TitleCards_hero.css";
 import { Link } from "react-router-dom";
 // eslint-disable-next-line react/prop-types
 const TitleCards_hero = ({ title, category }) => {
   const [apiData, setApiData] = useState([]);
+  const [selectedMovie, setSelectedMovie] = useState(null);
   const cardsRef = useRef();
   const options = {
     method: "GET",
@@ -38,10 +40,10 @@ const TitleCards_hero = ({ title, category }) => {
       <div className="card_list flex gap-2.5 overflow-x-scroll" ref={cardsRef}>
         {apiData.map((card, index) => {
           return (
-            <Link
-              to={`/player/${card.id}`}
+            <div
               className="card relative"
               key={index}
+              onClick={() => setSelectedMovie(card)}
             >
               <img
                 src={"https://image.tmdb.org/t/p/w500" + card.backdrop_path}
@@ -51,10 +53,16 @@ const TitleCards_hero = ({ title, category }) => {
               <p className="absolute bottom-2.5 right-2.5 no-underline text-white ">
                 {card.original_title}
               </p>
-            </Link>
+            </div>
           );
         })}
       </div>
+      {selectedMovie && (
+        <PlayerOverlay
+          movie={selectedMovie}
+          onClose={() => setSelectedMovie(null)}
+        />
+      )}
     </div>
   );
 };

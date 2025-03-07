@@ -11,7 +11,8 @@ const PlayerOverlay = ({ movie, onClose }) => {
         method: "GET",
         headers: {
           accept: "application/json",
-          Authorization: "Bearer TON_TOKEN_API",
+          Authorization:
+            "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI2MDI3OWY4MmIyZmE1NDBlNWY3NTgwYmQyZmM5ZmNhNiIsIm5iZiI6MTczNjkyNzg5OS4wODA5OTk5LCJzdWIiOiI2Nzg3NmE5YmJkMzk1NWIyNDY3YjA4ODMiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.JiCq0k__RxTT2tDB_d-phOEbBn9ku0zpIxNJVAATVyA",
         },
       };
 
@@ -44,29 +45,49 @@ const PlayerOverlay = ({ movie, onClose }) => {
   }, [movie]);
 
   return (
-    <div className="fixed top-0 left-0 w-full h-full bg-black/80 flex items-center justify-center z-1000 backdrop-blur-[1px]">
-      <div className="bg-black rounded-lg max-w-[100%] max-h-screen overflow-y-auto text-center fixed p-4">
+    <div
+      className="fixed top-0 left-0 w-full h-full bg-black/80 flex items-center justify-center z-1000 backdrop-blur-[1px]"
+      onClick={onClose}
+    >
+      <div
+        className="bg-black rounded-lg max-w-[100%] max-h-[90%] overflow-y-auto text-center fixed"
+        onClick={(e) => e.stopPropagation()}
+      >
         <button
-          className="absolute top-2.5 right-2.5 bg-black text-xl cursor-pointer text-white w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-800"
+          className="absolute top-2.5 right-2.5 bg-black text-xl cursor-pointer text-white w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-800 z-50"
           onClick={onClose}
         >
           ×
         </button>
+
         {videoKey ? (
-          <iframe
-            width="850px"
-            height="480px"
-            src={`https://www.youtube.com/embed/${videoKey}?autoplay=1&controls=0&showinfo=0&modestbranding=1&rel=0&iv_load_policy=3&disablekb=1`}
-            title={movie.original_title}
-            frameBorder="0"
-            allow="autoplay; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-            className="pointer-events-none select-none rounded-xl"
-          ></iframe>
+          <div className="relative">
+            <iframe
+              width="850px"
+              height="480px"
+              src={`https://www.youtube.com/embed/${videoKey}?autoplay=1&controls=0&showinfo=0&modestbranding=1&rel=0&iv_load_policy=3&disablekb=1&playsinline=1&fs=0&origin=${window.location.origin}&enablejsapi=1`}
+              title={movie.original_title}
+              frameBorder="0"
+              allow="autoplay; encrypted-media"
+              allowFullScreen={false}
+              className="pointer-events-none select-none rounded-xl"
+              style={{
+                position: "relative",
+                zIndex: 1,
+              }}
+            ></iframe>
+            <div
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                background: "transparent",
+                zIndex: 2,
+              }}
+            />
+          </div>
         ) : (
           <p className="text-white">Aucune vidéo disponible.</p>
         )}
-        <div className="details flex text-left pl-4 text-white justify-between pt-2">
+        <div className="details flex text-left pl-4 text-white justify-between pt-2 pb-10">
           <div className="player_info flex-col items-center w-[70%]">
             <h2 className="text-2xl pb-4">
               {movie.original_title} -{" "}
