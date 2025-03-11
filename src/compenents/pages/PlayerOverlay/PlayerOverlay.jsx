@@ -16,7 +16,7 @@ const PlayerOverlay = ({ movie, onClose }) => {
         },
       };
 
-      // 📌 Récupération de la vidéo
+      // Fetch de la vidéo
       fetch(
         `https://api.themoviedb.org/3/movie/${movie.id}/videos?language=fr-FR`,
         options
@@ -29,7 +29,7 @@ const PlayerOverlay = ({ movie, onClose }) => {
         })
         .catch((err) => console.error("Erreur récupération vidéo:", err));
 
-      // 📌 Récupération du casting
+      // Fetch casting
       fetch(
         `https://api.themoviedb.org/3/movie/${movie.id}/credits?language=fr-FR`,
         options
@@ -37,7 +37,7 @@ const PlayerOverlay = ({ movie, onClose }) => {
         .then((res) => res.json())
         .then((data) => {
           if (data.cast?.length > 0) {
-            setCast(data.cast.slice(0, 5)); // ✅ Garde les 5 premiers acteurs
+            setCast(data.cast.slice(0, 5));
           }
         })
         .catch((err) => console.error("Erreur récupération cast:", err));
