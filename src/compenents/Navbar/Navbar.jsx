@@ -7,7 +7,7 @@ import profile_img from "../../assets/profile_img.png";
 import caret_icon from "../../assets/caret_icon.svg";
 import "./Navbar.css";
 import { use } from "react";
-import { logout } from "../../firebase";
+import { logout } from "../../services/auth?js";
 import { Link } from "react-router-dom";
 const Navbar = () => {
   const navRef = useRef();
@@ -27,7 +27,9 @@ const Navbar = () => {
     >
       {/* Section gauche */}
       <div className="navbar-left flex center gap-20">
-        <img src={logo} alt="Netflix Logo" className="navbar-left-img" />
+        <a href="/Home">
+          <img src={logo} alt="Netflix Logo" className="navbar-left-img" />
+        </a>
         <ul className="navbar-left-ul cursor-pointer items-center">
           <Link to="/Home">
             <li className="hover:underline">Home</li>

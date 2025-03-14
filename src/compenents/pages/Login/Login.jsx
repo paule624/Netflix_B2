@@ -2,8 +2,9 @@
 import React, { useState } from "react";
 import logo from "../../../assets/logo.png";
 import "./Login.css";
-import { login, signup } from "../../../firebase";
 import netflix_spinner from "../../../assets/netflix_spinner.gif";
+import { toast } from "react-toastify";
+import { login, signup } from "../../../services/auth";
 
 const Login = () => {
   const [signState, setSignState] = useState("Se connecter");
@@ -15,12 +16,22 @@ const Login = () => {
   const user_auth = async (event) => {
     event.preventDefault();
     setLoading(true);
-    if (signState === "Se connecter") {
-      await login(email, password);
-    } else {
-      await signup(name, email, password);
+    try {
+      if (signState === "Se connecter") {
+        console.log("Tentative de connexion avec email:", email);
+        await login(email, password);
+      } else {
+        console.log("Tentative d'inscription avec email:", email);
+        await signup(name, email, password);
+      }
+      // Rediriger vers la page d'accueil après connexion réussie
+      window.location.href = "/";
+    } catch (error) {
+      console.error("Erreur d'authentification:", error);
+      // L'erreur est déjà affichée par toast dans les fonctions login/signup
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return loading ? (
@@ -42,6 +53,7 @@ const Login = () => {
               type="text"
               placeholder="Votre nom"
               className="w-full"
+              autoComplete="name"
             />
           ) : (
             <></>
@@ -54,6 +66,7 @@ const Login = () => {
             type="email"
             placeholder="Email"
             className="w-full"
+            autoComplete="email"
           />
           <input
             value={password}
@@ -63,6 +76,7 @@ const Login = () => {
             type="password"
             placeholder="Mot de passe"
             className="w-full"
+            autoComplete="current-password"
           />
           <button
             type="submit"
@@ -70,10 +84,7 @@ const Login = () => {
           >
             {signState}
           </button>
-          <div
-            className="form_help flex items-center
- justify-between text-[#b3b3b3] text-sm"
-          >
+          <div className="form_help flex items-center justify-between text-[#b3b3b3] text-sm">
             <div className="remember flex items-center gap-1">
               <input type="checkbox" className="w-4 h-4" />
               <p className="">Se souvenir de moi</p>

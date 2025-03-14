@@ -7,35 +7,25 @@ const PlayerOverlay = ({ movie, onClose }) => {
 
   useEffect(() => {
     if (!movie.key && movie.id) {
-      const options = {
-        method: "GET",
-        headers: {
-          accept: "application/json",
-          Authorization:
-            "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI2MDI3OWY4MmIyZmE1NDBlNWY3NTgwYmQyZmM5ZmNhNiIsIm5iZiI6MTczNjkyNzg5OS4wODA5OTk5LCJzdWIiOiI2Nzg3NmE5YmJkMzk1NWIyNDY3YjA4ODMiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.JiCq0k__RxTT2tDB_d-phOEbBn9ku0zpIxNJVAATVyA",
-        },
-      };
-
-      // Fetch de la vidéo
-      fetch(
-        `https://api.themoviedb.org/3/movie/${movie.id}/videos?language=fr-FR`,
-        options
-      )
+      // Fetch de la vidéo depuis votre backend
+      fetch(`http://localhost:5001/api/movies/${movie.id}/videos?langue=fr-FR`)
         .then((res) => res.json())
         .then((data) => {
+          console.log("Données vidéo reçues:", data);
           if (data.results?.length > 0) {
             setVideoKey(data.results[0].key);
+          } else if (data.key) {
+            // Si votre API renvoie directement la clé
+            setVideoKey(data.key);
           }
         })
         .catch((err) => console.error("Erreur récupération vidéo:", err));
 
-      // Fetch casting
-      fetch(
-        `https://api.themoviedb.org/3/movie/${movie.id}/credits?language=fr-FR`,
-        options
-      )
+      // Fetch casting depuis votre backend - URL mise à jour
+      fetch(`http://localhost:5001/api/movies/${movie.id}/credits?langue=fr-FR`)
         .then((res) => res.json())
         .then((data) => {
+          console.log("Données casting reçues:", data);
           if (data.cast?.length > 0) {
             setCast(data.cast.slice(0, 5));
           }

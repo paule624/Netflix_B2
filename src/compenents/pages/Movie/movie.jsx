@@ -1,42 +1,43 @@
 import { useEffect, useState } from "react";
 import Navbar from "../../Navbar/Navbar";
+import { fetchWithAuth } from "../../../services/auth";
+import PlayerOverlay from "../PlayerOverlay/PlayerOverlay";
 
 const Movie = () => {
   const [movies, setMovies] = useState([]);
   const [filteredMovies, setFilteredMovies] = useState([]);
   const [genres, setGenres] = useState([]);
   const [showGenres, setShowGenres] = useState(false);
+  const [selectedMovie, setSelectedMovie] = useState(null);
 
   useEffect(() => {
-    const options = {
-      method: "GET",
-      headers: {
-        accept: "application/json",
-        Authorization:
-          "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI2MDI3OWY4MmIyZmE1NDBlNWY3NTgwYmQyZmM5ZmNhNiIsIm5iZiI6MTczNjkyNzg5OS4wODA5OTk5LCJzdWIiOiI2Nzg3NmE5YmJkMzk1NWIyNDY3YjA4ODMiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.JiCq0k__RxTT2tDB_d-phOEbBn9ku0zpIxNJVAATVyA",
-      },
-    };
-
-    // Récupération des films tendances
-    fetch(
-      "https://api.themoviedb.org/3/trending/all/day?language=fr-FR",
-      options
-    )
+    // Récupération des films tendances depuis votre backend
+    fetchWithAuth("http://localhost:5001/api/trending?langue=fr-FR")
       .then((res) => res.json())
       .then((data) => {
-        setMovies(data.results);
-        setFilteredMovies(data.results);
+        console.log("Données films tendances reçues:", data);
+        if (data.results) {
+          setMovies(data.results);
+          setFilteredMovies(data.results);
+        } else {
+          setMovies(data);
+          setFilteredMovies(data);
+        }
       })
-      .catch((err) => console.error("Erreur:", err));
+      .catch((err) => console.error("Erreur récupération films:", err));
 
-    // Récupération des genres
-    fetch(
-      "https://api.themoviedb.org/3/genre/movie/list?language=fr-FR",
-      options
-    )
+    // Récupération des genres depuis votre backend
+    fetchWithAuth("http://localhost:5001/api/genres?langue=fr-FR")
       .then((res) => res.json())
-      .then((data) => setGenres(data.genres))
-      .catch((err) => console.error("Erreur:", err));
+      .then((data) => {
+        console.log("Données genres reçues:", data);
+        if (data.genres) {
+          setGenres(data.genres);
+        } else {
+          setGenres(data);
+        }
+      })
+      .catch((err) => console.error("Erreur récupération genres:", err));
   }, []);
 
   // Applique un filtre en fonction du genre sélectionné
@@ -45,10 +46,20 @@ const Movie = () => {
       setFilteredMovies(movies); // Réaffiche tous les films
     } else {
       setFilteredMovies(
-        movies.filter((movie) => movie.genre_ids.includes(genreId))
+        movies.filter((movie) => movie.genre_ids?.includes(genreId))
       );
     }
     setShowGenres(false); // Cache le menu après sélection
+  };
+
+  // Fonction pour ouvrir l'overlay avec le film sélectionné
+  const handleMovieClick = (movie) => {
+    setSelectedMovie(movie);
+  };
+
+  // Fonction pour fermer l'overlay
+  const handleCloseOverlay = () => {
+    setSelectedMovie(null);
   };
 
   return (
@@ -98,7 +109,11 @@ const Movie = () => {
         {/* Affichage des films */}
         <div className="grid grid-cols-5 gap-4 mt-5 place-items-center">
           {filteredMovies.map((movie) => (
-            <div key={movie.id} className="card relative cursor-pointer">
+            <div
+              key={movie.id}
+              className="card relative cursor-pointer hover:scale-105 transition-transform duration-200"
+              onClick={() => handleMovieClick(movie)}
+            >
               <img
                 src={`https://image.tmdb.org/t/p/w500/${movie.backdrop_path}`}
                 alt={movie.title || movie.name}
@@ -111,6 +126,10 @@ const Movie = () => {
           ))}
         </div>
       </div>
+
+      {selectedMovie && (
+        <PlayerOverlay movie={selectedMovie} onClose={handleCloseOverlay} />
+      )}
     </div>
   );
 };

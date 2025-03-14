@@ -1,8 +1,8 @@
 /* eslint-disable no-unused-vars */
 import React, { useState } from "react";
 import Navbar from "../../Navbar/Navbar";
-import hero_banner from "../../../assets/hero_banner.jpg";
-import hero_title from "../../../assets/hero_title.png";
+import hero_banner from "../../../assets/cards/Kunfu_panda_hero_img.jpg";
+import hero_title from "../../../assets/cards/kunfu_panda_hero_title.png";
 import TitleCards from "../../TitleCards/TitleCards";
 import "./Home.css";
 import Footer from "../../Footer/Footer";
@@ -10,6 +10,7 @@ import play_icon from "../../../assets/play_icon.png";
 import info_icon from "../../../assets/info_icon.png";
 import TitleCards_hero from "../../TitleCards_hero/TitleCards_hero";
 import PlayerOverlay from "../../pages/PlayerOverlay/PlayerOverlay";
+import { fetchWithAuth } from "../../../services/auth";
 
 const Home = () => {
   // État pour stocker le film sélectionné (détails pour l'overlay)
@@ -32,9 +33,11 @@ const Home = () => {
               className="hero_caption_img"
             />
             <p className="pt-2.5 pb-2.5">
-              Découvrant ses liens avec un ordre ancien secret, un jeune homme
-              vivant dans le Istanbul moderne se lance dans une quête pour
-              sauver la ville d&#39;un ennemi immortel.
+              Po, un panda passionné d&apos;arts martiaux, découvre qu&apos;il
+              est l&apos;élu d&apos;une ancienne prophétie. Malgré son manque
+              d&apos;expérience, il doit s&apos;entraîner auprès des Cinq
+              Cyclones et du maître Shifu pour affronter un redoutable ennemi
+              qui menace la vallée de la Paix.
             </p>
             <div className="hero_btn flex gap-2.5">
               <button className="btn hero_buttons_light">
@@ -62,7 +65,7 @@ const Home = () => {
         />
         <TitleCards
           title={"Uniquement sur Netflix"}
-          category={"popular"}
+          category={"now_playing"}
           setSelectedMovie={setSelectedMovie}
         />
         <TitleCards
@@ -72,7 +75,7 @@ const Home = () => {
         />
         <TitleCards
           title={"Sélections principales pour vous"}
-          category={"now_playing"}
+          category={"popular"}
           setSelectedMovie={setSelectedMovie}
         />
       </div>
@@ -91,3 +94,18 @@ const Home = () => {
 };
 
 export default Home;
+
+// Replace this:
+// fetch("http://localhost:5001/api/movies/category?category=popular&page=1&langue=fr-FR")
+
+// With this:
+fetchWithAuth(
+  "http://localhost:5001/api/movies/category?category=popular&page=1&langue=fr-FR"
+)
+  .then((response) => response.json())
+  .then((data) => {
+    // Handle data
+  })
+  .catch((error) => {
+    console.error("Error fetching movies:", error);
+  });

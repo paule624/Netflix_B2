@@ -1,40 +1,70 @@
 /* eslint-disable no-unused-vars */
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Home from "./compenents/pages/Home/Home";
-import { Routes, Route, useNavigate } from "react-router-dom";
-import Login from "./compenents/pages/Login/Login";
+import { Routes, Route, useNavigate, Navigate } from "react-router-dom";
+import Login from "./compenents/pages/Login/login";
 import Player from "./compenents/pages/Player/Player";
-import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "./firebase";
+import { auth } from "./services/auth";
 import { ToastContainer, toast } from "react-toastify";
 import Movie from "./compenents/pages/Movie/movie";
 
 const App = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
-    onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        console.log("Connecté");
-        navigate("/");
-      } else {
-        console.log("Deconnecté");
-        navigate("login");
+    // Check if user is logged in
+    const checkAuthStatus = async () => {
+      try {
+        setIsLoading(true);
+        const isAuth = await auth.isAuthenticated();
+        console.log("État d'authentification:", isAuth);
+        setIsAuthenticated(isAuth);
+
+        // Only redirect if we're not already on the correct page
+        if (isAuth && window.location.pathname === "/login") {
+          navigate("/");
+        } else if (!isAuth && window.location.pathname !== "/login") {
+          navigate("/login");
+        }
+      } catch (error) {
+        console.error("Erreur de vérification auth:", error);
+        setIsAuthenticated(false);
+        navigate("/login");
+      } finally {
+        setIsLoading(false);
       }
-    });
-  }, []);
+    };
+
+    checkAuthStatus();
+  }, [navigate]);
+
+  if (isLoading) {
+    return <div>Chargement...</div>;
+  }
 
   return (
     <div>
       <ToastContainer theme="dark" />
       <Routes>
-        <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/player/:id" element={<Player />} />
-
-        {/* Ajoute la route pour la page des films */}
-        <Route path="/movie" element={<Movie />} />
-        <Route path="/Home" element={<Home />} />
+        <Route
+          path="/"
+          element={isAuthenticated ? <Home /> : <Navigate to="/login" />}
+        />
+        <Route
+          path="/player/:id"
+          element={isAuthenticated ? <Player /> : <Navigate to="/login" />}
+        />
+        <Route
+          path="/movie"
+          element={isAuthenticated ? <Movie /> : <Navigate to="/login" />}
+        />
+        <Route
+          path="/home"
+          element={isAuthenticated ? <Home /> : <Navigate to="/login" />}
+        />
       </Routes>
     </div>
   );

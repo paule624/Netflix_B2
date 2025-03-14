@@ -6,14 +6,6 @@ import "./TitleCards.css";
 const TitleCards = ({ title, category, setSelectedMovie }) => {
   const [apiData, setApiData] = useState([]);
   const cardsRef = useRef();
-  const options = {
-    method: "GET",
-    headers: {
-      accept: "application/json",
-      Authorization:
-        "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI2MDI3OWY4MmIyZmE1NDBlNWY3NTgwYmQyZmM5ZmNhNiIsIm5iZiI6MTczNjkyNzg5OS4wODA5OTk5LCJzdWIiOiI2Nzg3NmE5YmJkMzk1NWIyNDY3YjA4ODMiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.JiCq0k__RxTT2tDB_d-phOEbBn9ku0zpIxNJVAATVyA",
-    },
-  };
 
   const handleWheel = (event) => {
     event.preventDefault();
@@ -21,15 +13,26 @@ const TitleCards = ({ title, category, setSelectedMovie }) => {
   };
 
   useEffect(() => {
+    // Utiliser l'endpoint local au lieu de l'API TMDB directement
+    const categoryParam = category || "popular";
+
     fetch(
-      `https://api.themoviedb.org/3/movie/${
-        category ? category : "now_playing"
-      }?language=fr-FR&page=1`,
-      options
+      `http://localhost:5001/api/movies/category?category=${categoryParam}&page=1&langue=fr-FR`
     )
       .then((res) => res.json())
-      .then((res) => setApiData(res.results))
-      .catch((err) => console.error(err));
+      .then((data) => {
+        console.log("Données reçues du backend:", data);
+        // Vérifier si les données sont dans le même format que l'API TMDB
+        if (data.results) {
+          setApiData(data.results);
+        } else {
+          // Si le format est différent, adapter selon la structure de votre API
+          setApiData(data);
+        }
+      })
+      .catch((err) => {
+        console.error("Erreur lors de la récupération des films:", err);
+      });
 
     const currentRef = cardsRef.current;
     currentRef.addEventListener("wheel", handleWheel);
@@ -37,7 +40,7 @@ const TitleCards = ({ title, category, setSelectedMovie }) => {
     return () => {
       currentRef.removeEventListener("wheel", handleWheel);
     };
-  }, []);
+  }, [category]);
 
   return (
     <div className="titleCards">

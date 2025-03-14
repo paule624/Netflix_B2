@@ -1,38 +1,51 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useRef, useState } from "react";
 import PlayerOverlay from "../pages/PlayerOverlay/PlayerOverlay";
-import cards_data from "../../assets/cards/Cards_data";
 import "./TitleCards_hero.css";
 import { Link } from "react-router-dom";
+
 // eslint-disable-next-line react/prop-types
 const TitleCards_hero = ({ title, category }) => {
   const [apiData, setApiData] = useState([]);
   const [selectedMovie, setSelectedMovie] = useState(null);
   const cardsRef = useRef();
-  const options = {
-    method: "GET",
-    headers: {
-      accept: "application/json",
-      Authorization:
-        "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI2MDI3OWY4MmIyZmE1NDBlNWY3NTgwYmQyZmM5ZmNhNiIsIm5iZiI6MTczNjkyNzg5OS4wODA5OTk5LCJzdWIiOiI2Nzg3NmE5YmJkMzk1NWIyNDY3YjA4ODMiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.JiCq0k__RxTT2tDB_d-phOEbBn9ku0zpIxNJVAATVyA",
-    },
-  };
+
   const handleWheel = (event) => {
     event.preventDefault();
     cardsRef.current.scrollLeft += event.deltaY;
   };
+
   useEffect(() => {
+    const categoryParam = category || "popular";
+
     fetch(
-      `https://api.themoviedb.org/3/movie/${
-        category ? category : "now_playing"
-      }?language=fr-FR&page=1`,
-      options
+      `http://localhost:5001/api/movies/category?category=${categoryParam}&page=1&langue=fr-FR`
     )
       .then((res) => res.json())
-      .then((res) => setApiData(res.results))
-      .catch((err) => console.error(err));
+      .then((data) => {
+        if (data.results) {
+          setApiData(data.results);
+        } else {
+          // Si le format est différent, adapter selon la structure de votre API
+          setApiData(data);
+        }
+      })
+      .catch((err) => {
+        console.error("Erreur lors de la récupération des films:", err);
+      });
+
     cardsRef.current.addEventListener("wheel", handleWheel);
-  }, []);
+
+    // Nettoyage de l'event listener
+    return () => {
+      if (cardsRef.current) {
+        const currentRef = cardsRef.current;
+        if (currentRef) {
+          currentRef.removeEventListener("wheel", handleWheel);
+        }
+      }
+    };
+  }, [category]);
 
   return (
     <div className="titleCards_hero">

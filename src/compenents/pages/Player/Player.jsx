@@ -13,23 +13,22 @@ const Player = () => {
     published_at: "",
     typeof: "",
   });
-  const options = {
-    method: "GET",
-    headers: {
-      accept: "application/json",
-      Authorization:
-        "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI2MDI3OWY4MmIyZmE1NDBlNWY3NTgwYmQyZmM5ZmNhNiIsIm5iZiI6MTczNjkyNzg5OS4wODA5OTk5LCJzdWIiOiI2Nzg3NmE5YmJkMzk1NWIyNDY3YjA4ODMiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.JiCq0k__RxTT2tDB_d-phOEbBn9ku0zpIxNJVAATVyA",
-    },
-  };
+
   useEffect(() => {
-    fetch(
-      `https://api.themoviedb.org/3/movie/${id}/videos?language=fr-FR`,
-      options
-    )
+    // Utiliser l'endpoint local au lieu de l'API TMDB directement
+    fetch(`http://localhost:5001/api/movies/${id}/videos?langue=fr-FR`)
       .then((res) => res.json())
-      .then((res) => setApiData(res.results[0]))
-      .catch((err) => console.error(err));
-  }, []);
+      .then((data) => {
+        console.log("Données vidéo reçues:", data);
+        if (data.results?.length > 0) {
+          setApiData(data.results[0]);
+        } else if (data.key) {
+          // Si l'API renvoie directement la clé
+          setApiData(data);
+        }
+      })
+      .catch((err) => console.error("Erreur récupération vidéo:", err));
+  }, [id]);
 
   return (
     <div className="player h-[100vh] flex flex-col justify-center items-center ">
