@@ -1,39 +1,71 @@
 import { useEffect, useState } from "react";
 import PropTypes from "prop-types";
+import {
+  fetchMovieVideos,
+  fetchMovieCredits,
+} from "../../../services/movieService";
 
 const PlayerOverlay = ({ movie, onClose }) => {
   const [videoKey, setVideoKey] = useState(movie.key || "");
-  const [cast, setCast] = useState([]); // ✅ Stocker les acteurs
+  const [cast, setCast] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (!movie.key && movie.id) {
-      // Fetch de la vidéo depuis votre backend
-      fetch(`http://localhost:5001/api/movies/${movie.id}/videos?langue=fr-FR`)
-        .then((res) => res.json())
-        .then((data) => {
-          console.log("Données vidéo reçues:", data);
-          if (data.results?.length > 0) {
-            setVideoKey(data.results[0].key);
-          } else if (data.key) {
-            // Si votre API renvoie directement la clé
-            setVideoKey(data.key);
-          }
-        })
-        .catch((err) => console.error("Erreur récupération vidéo:", err));
+    let isMounted = true;
 
-      // Fetch casting depuis votre backend - URL mise à jour
-      fetch(`http://localhost:5001/api/movies/${movie.id}/credits?langue=fr-FR`)
-        .then((res) => res.json())
-        .then((data) => {
-          console.log("Données casting reçues:", data);
-          if (data.cast?.length > 0) {
-            setCast(data.cast.slice(0, 5));
+    const loadMovieData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        if (!movie.key && movie.id) {
+          // Log movie data for debugging
+          console.log("Loading data for movie:", {
+            id: movie.id,
+            title: movie.original_title,
+          });
+
+          // Fetch videos
+          const videoData = await fetchMovieVideos(movie.id, "fr-FR");
+          console.log("Données vidéo reçues:", videoData);
+
+          if (isMounted) {
+            if (videoData.results?.length > 0) {
+              setVideoKey(videoData.results[0].key);
+            } else if (videoData.key) {
+              setVideoKey(videoData.key);
+            }
           }
-        })
-        .catch((err) => console.error("Erreur récupération cast:", err));
-    }
+
+          // Fetch cast
+          const creditsData = await fetchMovieCredits(movie.id, "fr-FR");
+          console.log("Données casting reçues:", creditsData);
+
+          if (isMounted && creditsData.cast?.length > 0) {
+            setCast(creditsData.cast.slice(0, 5));
+          }
+        }
+      } catch (err) {
+        console.error("Erreur lors du chargement des données du film:", err);
+        if (isMounted) {
+          setError(err.message);
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    };
+
+    loadMovieData();
+
+    return () => {
+      isMounted = false;
+    };
   }, [movie]);
 
+  // Le reste du composant reste inchangé
   return (
     <div
       className="fixed top-0 left-0 w-full h-full bg-black/80 flex items-center justify-center z-1000 backdrop-blur-[1px]"
@@ -50,33 +82,29 @@ const PlayerOverlay = ({ movie, onClose }) => {
           ×
         </button>
 
-        {videoKey ? (
-          <div className="relative">
+        {loading ? (
+          <div className="text-white p-10">Chargement...</div>
+        ) : error ? (
+          <div className="text-red-500 p-10">Erreur: {error}</div>
+        ) : videoKey ? (
+          <div className="relative w-[850px] h-[480px]">
             <iframe
               width="850px"
               height="480px"
-              src={`https://www.youtube.com/embed/${videoKey}?autoplay=1&controls=0&showinfo=0&modestbranding=1&rel=0&iv_load_policy=3&disablekb=1&playsinline=1&fs=0&origin=${window.location.origin}&enablejsapi=1`}
+              src={`https://www.youtube.com/embed/${videoKey}?autoplay=1&controls=0&modestbranding=1&rel=0&disablekb=1`}
               title={movie.original_title}
               frameBorder="0"
               allow="autoplay; encrypted-media"
-              allowFullScreen={false}
-              className="pointer-events-none select-none rounded-xl"
-              style={{
-                position: "relative",
-                zIndex: 1,
-              }}
+              allowFullScreen
+              className="rounded-xl"
             ></iframe>
-            <div
-              className="absolute inset-0 pointer-events-none"
-              style={{
-                background: "transparent",
-                zIndex: 2,
-              }}
-            />
+            <div className="absolute inset-0"></div>{" "}
+            {/* Superposition invisible */}
           </div>
         ) : (
-          <p className="text-white">Aucune vidéo disponible.</p>
+          <p className="text-white p-10">Aucune vidéo disponible.</p>
         )}
+
         <div className="details flex text-left pl-4 text-white justify-between pt-2 pb-10">
           <div className="player_info flex-col items-center w-[70%]">
             <h2 className="text-2xl pb-4">

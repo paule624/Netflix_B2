@@ -1,30 +1,54 @@
 import { toast } from "react-toastify";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 export const signup = async (name, email, password) => {
   try {
-    const response = await fetch("http://localhost:5001/api/auth/signup", {
+    console.log("Tentative d'inscription:", { email, name });
+    console.log("API_URL:", API_URL);
+
+    // Validate input
+    if (!email || !password || !name) {
+      throw new Error("Tous les champs sont requis");
+    }
+
+    const response = await fetch(`${API_URL}/api/auth/signup`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        Accept: "application/json",
       },
       body: JSON.stringify({ name, email, password }),
-      credentials: "include", // Important: allows cookies to be sent and received
+      credentials: "include",
     });
 
-    const data = await response.json();
+    console.log("Status:", response.status);
+    const contentType = response.headers.get("content-type");
+    console.log("Content-Type:", contentType);
+
+    // Get the response text first for debugging
+    const text = await response.text();
+    console.log("Response text:", text);
+
+    // Try to parse the response as JSON
+    let data;
+    try {
+      data = JSON.parse(text);
+    } catch (e) {
+      console.error("Failed to parse response as JSON:", e);
+      throw new Error("Réponse invalide du serveur");
+    }
 
     if (!response.ok) {
-      toast.error(data.message || "Erreur lors de l'inscription");
       throw new Error(data.message || "Erreur lors de l'inscription");
     }
 
-    // Store user info in localStorage
     localStorage.setItem("user", JSON.stringify(data.user));
-
     toast.success("Inscription réussie!");
     return data;
   } catch (error) {
     console.error("Signup error:", error);
+    toast.error(error.message || "Erreur lors de l'inscription");
     throw error;
   }
 };
@@ -32,30 +56,30 @@ export const signup = async (name, email, password) => {
 export const login = async (email, password) => {
   try {
     console.log("Tentative de connexion avec:", { email });
+    console.log("API_URL:", API_URL);
 
-    const response = await fetch("http://localhost:5001/api/auth/login", {
+    const response = await fetch(`${API_URL}/api/auth/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        Accept: "application/json",
       },
       body: JSON.stringify({ email, password }),
-      credentials: "include", // Important: allows cookies to be sent and received
+      credentials: "include",
+      mode: "cors",
     });
 
-    const data = await response.json();
-    console.log("Réponse du serveur:", data);
+    console.log("Status:", response.status);
 
     if (!response.ok) {
-      throw new Error(data.message || "Email ou mot de passe incorrect");
+      const errorData = await response.json().catch(() => ({
+        message: "Erreur de connexion au serveur",
+      }));
+      throw new Error(errorData.message || "Email ou mot de passe incorrect");
     }
 
-    // Only store user info, token is in the cookie
+    const data = await response.json();
     localStorage.setItem("user", JSON.stringify(data.user));
-
-    console.log("Authentification réussie, données stockées:", {
-      user: data.user,
-    });
-
     toast.success("Connexion réussie !");
     return data;
   } catch (error) {
@@ -67,51 +91,51 @@ export const login = async (email, password) => {
 
 export const logout = async () => {
   try {
-    await fetch("http://localhost:5001/api/auth/logout", {
+    const response = await fetch(`${API_URL}/auth/logout`, {
       method: "POST",
-      credentials: "include", // Important: allows cookies to be sent and received
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
     });
 
-    // Clear local storage
     localStorage.removeItem("user");
+
+    if (!response.ok) {
+      console.warn(
+        "Déconnexion côté serveur a échoué, mais l'utilisateur a été déconnecté localement"
+      );
+    }
 
     toast.success("Déconnexion réussie");
     window.location.href = "/login";
   } catch (error) {
     console.error("Erreur lors de la déconnexion:", error);
-    toast.error("Erreur lors de la déconnexion");
+    localStorage.removeItem("user");
+    toast.info("Déconnexion effectuée localement");
+    window.location.href = "/login";
   }
 };
 
-// Mise à jour de la méthode isAuthenticated
-// Add this function to check authentication with the server
 export const checkAuthWithServer = async () => {
   try {
-    const response = await fetch("http://localhost:5001/api/auth/check", {
+    const response = await fetch(`${API_URL}/api/auth/check`, {
       method: "GET",
-      credentials: "include", // Important for sending cookies
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },
     });
 
-    if (response.ok) {
-      return true;
-    }
-    return false;
+    return response.ok;
   } catch (error) {
     console.error("Error checking auth with server:", error);
     return false;
   }
 };
 
-// Add a helper function to make authenticated requests
 export const fetchWithAuth = async (url, options = {}) => {
-  // Get user from localStorage
   const userStr = localStorage.getItem("user");
   const user = userStr ? JSON.parse(userStr) : null;
 
-  // Ensure credentials are included
   const authOptions = {
     ...options,
     credentials: "include",
@@ -121,7 +145,6 @@ export const fetchWithAuth = async (url, options = {}) => {
     },
   };
 
-  // If we have a user, add their UID to the request headers
   if (user && user.uid) {
     authOptions.headers = {
       ...authOptions.headers,
@@ -129,19 +152,18 @@ export const fetchWithAuth = async (url, options = {}) => {
     };
   }
 
-  return fetch(url, authOptions);
+  const response = await fetch(url, authOptions);
+  return response;
 };
 
 export const auth = {
   async isAuthenticated() {
-    // First check if we have a user in localStorage
     const user = localStorage.getItem("user");
 
     if (!user) {
       return false;
     }
 
-    // Then verify with the server that our cookie is still valid
     try {
       const isValid = await checkAuthWithServer();
       return isValid;

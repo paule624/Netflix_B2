@@ -1,5 +1,4 @@
-/* eslint-disable no-unused-vars */
-import React, { useState } from "react";
+import { useState, useEffect } from "react";
 import Navbar from "../../Navbar/Navbar";
 import hero_banner from "../../../assets/cards/Kunfu_panda_hero_img.jpg";
 import hero_title from "../../../assets/cards/kunfu_panda_hero_title.png";
@@ -8,13 +7,34 @@ import "./Home.css";
 import Footer from "../../Footer/Footer";
 import play_icon from "../../../assets/play_icon.png";
 import info_icon from "../../../assets/info_icon.png";
-import TitleCards_hero from "../../TitleCards_hero/TitleCards_hero";
+import TitleCardsHero from "../../TitleCards_hero/TitleCards_hero";
 import PlayerOverlay from "../../pages/PlayerOverlay/PlayerOverlay";
 import { fetchWithAuth } from "../../../services/auth";
 
 const Home = () => {
   // État pour stocker le film sélectionné (détails pour l'overlay)
   const [selectedMovie, setSelectedMovie] = useState(null);
+  const API_URL = import.meta.env.VITE_API_URL;
+
+  useEffect(() => {
+    Promise.all([
+      fetchWithAuth(
+        `${API_URL}/movies/category?category=popular&page=1&langue=fr-FR`
+      ),
+      fetchWithAuth(
+        `${API_URL}/movies/category?category=top_rated&page=1&langue=fr-FR`
+      ),
+    ])
+      .then((responses) => Promise.all(responses.map((r) => r.json())))
+      .then(([popularData, topRatedData]) => {
+        // Handle both responses here
+        console.log("Popular movies:", popularData);
+        console.log("Top rated movies:", topRatedData);
+      })
+      .catch((error) => {
+        console.error("Error fetching movies:", error);
+      });
+  }, [API_URL]);
 
   return (
     <div className="home">
@@ -49,7 +69,7 @@ const Home = () => {
                 Plus d&#39;info
               </button>
             </div>
-            <TitleCards_hero
+            <TitleCardsHero
               setSelectedMovie={setSelectedMovie}
               className="cards_popular"
             />
@@ -94,18 +114,3 @@ const Home = () => {
 };
 
 export default Home;
-
-// Replace this:
-// fetch("http://localhost:5001/api/movies/category?category=popular&page=1&langue=fr-FR")
-
-// With this:
-fetchWithAuth(
-  "http://localhost:5001/api/movies/category?category=popular&page=1&langue=fr-FR"
-)
-  .then((response) => response.json())
-  .then((data) => {
-    // Handle data
-  })
-  .catch((error) => {
-    console.error("Error fetching movies:", error);
-  });

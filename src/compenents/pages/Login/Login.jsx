@@ -55,9 +55,7 @@ const Login = () => {
               className="w-full"
               autoComplete="name"
             />
-          ) : (
-            <></>
-          )}
+          ) : null}
           <input
             value={email}
             onChange={(e) => {
