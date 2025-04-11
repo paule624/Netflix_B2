@@ -2,11 +2,11 @@
 import React, { useEffect, useState } from "react";
 import Home from "./compenents/pages/Home/Home";
 import { Routes, Route, useNavigate, Navigate } from "react-router-dom";
-import Login from "./compenents/pages/Login/login";
+import Login from "./compenents/pages/Login/Login.jsx";
 import Player from "./compenents/pages/Player/Player";
 import { auth } from "./services/auth";
 import { ToastContainer, toast } from "react-toastify";
-import Movie from "./compenents/pages/Movie/movie";
+import Movie from "./compenents/pages/Movie/Movie";
 
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
